@@ -4,6 +4,7 @@ from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter import messagebox
 
 from codesys_symbols_parser import CodesysSymbolParser
+from xls_write import write_xls
 
 
 def ask_for_overwrite(filepath):
@@ -31,20 +32,25 @@ def main():
     parser = CodesysSymbolParser(symbols_filepath)
     parser.parse()
     symbols = parser.get_symbols()
-    output_filepath = ask_for_overwrite(Path(symbols_filepath).with_suffix('.csv'))
-    if not output_filepath:
+    csv_out_filepath = ask_for_overwrite(Path(symbols_filepath).with_suffix('.csv'))
+    if not csv_out_filepath:
         messagebox.showerror("No output file selected",
                              "No file selected to save the results.")
         return -1
 
     fieldnames = ['name', 'comment']
-    with open(output_filepath, 'w', newline='', encoding='utf-8') as f:
+    with open(csv_out_filepath, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writerows(symbols)
 
+    xlsx_out_filepath = ask_for_overwrite(Path(symbols_filepath).with_suffix('.xlsx'))
+    write_xls(xlsx_out_filepath, symbols)
+
     messagebox.showinfo("Symbols saved",
                         f'{len(symbols)} symbols found.\n'
-                        f'File saved to {output_filepath}.')
+                        f'File saved to :\n'
+                        f'{csv_out_filepath}\n'
+                        f'{xlsx_out_filepath}')
 
 
 if __name__ == '__main__':

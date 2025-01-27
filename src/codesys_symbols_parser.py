@@ -1,6 +1,12 @@
 import xml.etree.ElementTree as ET
 
 
+def parse_comment(comment):
+    if comment is None:
+        return ''
+    return comment.text.strip().replace('\\n', '\n')
+
+
 class CodesysSymbolParser:
     # namespace to use to parse the XML file
     __namespace = {'ns': 'http://www.3s-software.com/schemas/Symbolconfiguration.xsd'}
@@ -25,7 +31,7 @@ class CodesysSymbolParser:
     def _extract_usertype_defs(self):
         """
         This method lists the user types definitions from the XML file.
-        :return: A dictionnary indexed on type names keys.
+        :return: A dictionary indexed on type names keys.
         """
 
         types = {}
@@ -47,7 +53,7 @@ class CodesysSymbolParser:
                     'inherited_from': element.get('inherited_from'),  # optional attribute
                     'propertytype': element.get('propertytype'),  # optional attribute
                     'access': element.get('access'),  # optional attribute
-                    'comment': comment.text.strip() if comment else ''
+                    'comment': parse_comment(comment)
                 }
                 elements.append(element_info)
             types[type_name] = elements
@@ -56,7 +62,7 @@ class CodesysSymbolParser:
     # def extract_simpletype_defs(self):
     #     """
     #     This method lists the simple types definitions from the XML file.
-    #     :return: A dictionnary indexed on type names keys.
+    #     :return: A dictionary indexed on type names keys.
     #     """
     #     types = {}
     #     for type_def in self.root.findall(".//ns:TypeSimple", namespaces=self.__namespace):
@@ -94,7 +100,7 @@ class CodesysSymbolParser:
                         'name': current_path,
                         'comment': element['comment']
                     })
-                else:  # Recusive call to add the sub-members
+                else:  # Recursive call to add the sub-members
                     paths.extend(self._get_type_element_paths(element['type'], current_path))
         return paths
 
@@ -118,9 +124,11 @@ class CodesysSymbolParser:
         # Add the current node to the symbols list only if it is the last node (no children) and is of simple type
         if not child_nodes and node_type not in self._usertype_defs:
             comment = node.find('ns:Comment', namespaces=self.__namespace)
+            # if comment is not None:
+            #     print(comment.text)
             paths.append({
                 'name': current_path,
-                'comment': comment.text.strip() if comment is not None else None
+                'comment': parse_comment(comment)
             })
         else:
             for child in child_nodes:
