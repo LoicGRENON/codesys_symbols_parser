@@ -193,7 +193,7 @@ def write_headers(worksheet):
     for i, header in enumerate(headers):
         worksheet.write(1, i, header)
 
-def get_row_data(worksheet, category_id, symbol):
+def get_row_data(category_id, symbol):
     address = symbol['name']
     message = symbol['comment']
     plc_name = "PZ_PLC"
@@ -386,15 +386,15 @@ def write_rows(worksheet, symbols):
     for symbol in symbols:
         row_data = None
         if re.search(r'Application\.\w+\.stDefImdt\.', symbol['name']):  # Défauts immédiats
-            row_data = get_row_data(worksheet, 0, symbol)
+            row_data = get_row_data(0, symbol)
         elif re.search(r'Application\.\w+\.stDefFcy\.', symbol['name']):  # Défauts fin de cycle
-            row_data = get_row_data(worksheet, 1, symbol)
+            row_data = get_row_data(1, symbol)
         elif re.search(r'Application\.\w+\.stDefAttente\.', symbol['name']):  # Arrêts attente
-            row_data = get_row_data(worksheet, 2, symbol)
+            row_data = get_row_data(2, symbol)
         elif re.search(r'Application\.\w+\.stHmiAvert\.', symbol['name']):  # Avertissements
-            row_data = get_row_data(worksheet, 3, symbol)
+            row_data = get_row_data(3, symbol)
         elif re.search(r'Application\.\w+\.stHmiMessage\.', symbol['name']):  # Messages
-            row_data = get_row_data(worksheet, 4, symbol)
+            row_data = get_row_data(4, symbol)
 
         if row_data is not None:
             for i, value in enumerate(row_data):
