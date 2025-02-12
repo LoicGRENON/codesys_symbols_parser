@@ -198,6 +198,16 @@ def get_row_data(category_id, symbol):
     message = symbol['comment']
     plc_name = "PZ_PLC"
 
+    if category_id == 3:  # stHmiAvert
+        font_color = "0:0:0"        # black
+        bg_color = "255:215:0"      # orange
+    elif category_id == 4:  # stHmiMessage
+        font_color = "255:255:255"  # xhite
+        bg_color = "0:0:255"        # blue
+    else:  # stDefImdt / stDefFcy / stDefAttente
+        font_color = "0:0:0"        # black
+        bg_color = "165:42:42"      # dark red
+
     return [
         f"{category_id}: Category {category_id}",   # Catégorie
         "Low",                  # Priorité
@@ -223,7 +233,7 @@ def get_row_data(category_id, symbol):
         "False",                # bibliothèque de Labels activé
         "",                     # Nom de label
         "Droid Sans Fallback",  # Police
-        "0:0:0",                # Couleur
+        font_color,             # Couleur
         "11",                   # Valeur Acquittement
         "False",                # Son activé
         "",                     # Nom de la bibliothèque de sons
@@ -367,7 +377,7 @@ def get_row_data(category_id, symbol):
         "null",                 # Index (Temps écoulé)
         "",                     # Format donnée (Temps écoulé)
         "True",                 # Couleur de fond
-        "165:42:42",            # Couleur (Couleur de fond)
+        bg_color,               # Couleur (Couleur de fond)
         "",                     # Sous-catégorie 1
         "",                     # Sous-catégorie 2
         "False",                # Contrôle (Activer/Désactiver)
