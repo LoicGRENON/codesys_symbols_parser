@@ -7,6 +7,12 @@ def parse_comment(comment):
     return comment.text.strip().replace('\\n', '\n')
 
 
+def parse_attribute(attribute_elmt):
+    if attribute_elmt is None:
+        return None
+    return attribute_elmt.text.split(':=')
+
+
 class CodesysSymbolParser:
     # namespace to use to parse the XML file
     __namespace = {'ns': 'http://www.3s-software.com/schemas/Symbolconfiguration.xsd'}
@@ -42,6 +48,14 @@ class CodesysSymbolParser:
             for element in type_def.findall('ns:UserDefElement', namespaces=self.__namespace):
                 # Comment is a sub-node of UserDefElement
                 comment = element.find('ns:Comment', namespaces=self.__namespace)
+                # Attribute is a sub-node of UserDefElement
+                attribute_elmt = element.find('ns:Attribute', namespaces=self.__namespace)
+                attribute = parse_attribute(attribute_elmt)
+
+                # Ignore elements with attribute hmi_ignore
+                if attribute is not None and attribute[0] == 'hmi_ignore':
+                    continue
+
                 element_info = {
                     'type': element.get('type'),  # required attribute
                     'iecname': element.get('iecname'),  # required attribute
