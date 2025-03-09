@@ -8,9 +8,8 @@ def parse_comment(comment):
 
 
 def parse_attribute(attribute_elmt):
-    if attribute_elmt is None:
-        return None
-    return attribute_elmt.text.split(':=')
+    if attribute_elmt is not None:
+        return attribute_elmt.text.split(':=')
 
 
 class CodesysSymbolParser:
@@ -110,9 +109,11 @@ class CodesysSymbolParser:
 
                 # Add members of SimpleType. Testing on UserType definition make it to work as well for ArrayType
                 if element['type'] not in self._usertype_defs:
+                    byteoffset = int(element['byteoffset']) if 'byteoffset' in element else None
                     paths.append({
                         'name': current_path,
-                        'comment': element['comment']
+                        'comment': element['comment'],
+                        'byteoffset': byteoffset
                     })
                 else:  # Recursive call to add the sub-members
                     paths.extend(self._get_type_element_paths(element['type'], current_path))
